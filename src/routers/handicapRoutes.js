@@ -3,6 +3,10 @@ const router = new express.Router()
 const Handicap = require('../models/HandicapModel.js')
 const auth = require('../middleware/authHandicap')
 
+//hellothere
+router.get('/get', async(req, res) =>{
+    res.send({error: "nonon"})
+})
 
 
 // Create a new handicap
@@ -16,7 +20,7 @@ router.post('/handicap/signup', async (req, res) => {
         res.status(201).send({ handicap, token })
 
     } catch (error) {
-        res.status(400).send(error)
+        res.status(400).send({error: "there is something wrong"})
     }
 })
 

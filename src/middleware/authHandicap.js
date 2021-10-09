@@ -1,4 +1,4 @@
-const User = require('../models/HandicapModel')
+const Handicap = require('../models/HandicapModel')
 const jwt = require('jsonwebtoken')
 
 
@@ -6,13 +6,13 @@ const auth = async (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '')
         const decoded = jwt.verify(token, process.env.JWT)
-        const user = await User.findOne({_id: decoded._id, 'tokens.token': token})
+        const handicap = await Handicap.findOne({_id: decoded._id, 'tokens.token': token})
 
-        if(!user)
+        if(!handicap)
             throw new Error()
 
         req.token = token
-        req.user = user
+        req.handicap = handicap
 
         next()
 

@@ -35,6 +35,18 @@ const HandicapSchema = mongoose.Schema({
         type: String,
         require: true
     },
+    achievements: [
+        {
+            title: {
+                type: String,
+                trim: true
+            },
+            discription: {
+                type: String,
+                trim: true
+            }
+        }
+    ],
     password: {
         type: String,
         minlength: 7,
@@ -66,22 +78,22 @@ HandicapSchema.virtual('help', {
 })
 
 HandicapSchema.methods.toJSON = function(){
-    const user = this
-    const userObj = user.toObject()
+    const handicap = this
+    const handicapObj = handicap.toObject()
 
-    delete userObj.password
-    delete userObj.tokens
+    delete handicapObj.password
+    delete handicapObj.tokens
     
-    return userObj
+    return handicapObj
 }
 
 HandicapSchema.statics.findByIdCredential = async (email, password) => {
-    const user = await User.findOne({email})
+    const handicap = await Handicap.findOne({email})
 
-    if(!user)
+    if(!handicap)
         throw new Error({error: 'Unable to login'})
 
-    const isMatch = await bcrypt.compare(password, user.password)
+    const isMatch = await bcrypt.compare(password, handicap.password)
     // const isMatch = await (password === user.password)
 
     if(!isMatch)
@@ -89,39 +101,39 @@ HandicapSchema.statics.findByIdCredential = async (email, password) => {
     
     // console.log(user)
 
-    return user
+    return handicap
 }
 
 // It will generate web token and store it to the user
 HandicapSchema.methods.generateAuthToken = async function() {
-    const user = this
-    const token = await jwt.sign({ _id: user._id.toString()}, process.env.JWT)
+    const handicap = this
+    const token = await jwt.sign({ _id: handicap._id.toString()}, process.env.JWT)
 
-    user.tokens = user.tokens.concat({token})
-    await user.save()
+    handicap.tokens = handicap.tokens.concat({token})
+    await handicap.save()
 
     return token
 }
 
 // Hashing the plain password to the chiper text
 HandicapSchema.pre('save', async function (next){
-    const user = this
+    const handicap = this
 
-    if(user.isModified('password')){
-        user.password = await bcrypt.hash(user.password, 8)
+    if(handicap.isModified('password')){
+        handicap.password = await bcrypt.hash(handicap.password, 8)
     }
 
     next()
 })
 
-// It will delete all the story post by the user
+// It will delete all the help post by the handicap
 HandicapSchema.pre('remove', async function(next) {
-    const user = this
-    await Help.deleteMany({owner: user._id})
+    const handicap = this
+    await Help.deleteMany({owner: handicap._id})
 
     next()
 })
 
-const User = mongoose.model('Handicap', HandicapSchema)
+const Handicap = mongoose.model('Handicap', HandicapSchema)
 
-module.exports = User
+module.exports = Handicap

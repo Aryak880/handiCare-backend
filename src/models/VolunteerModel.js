@@ -52,6 +52,22 @@ const VolunteerSchema = mongoose.Schema({
         type: String,
         trim: true,
     },
+    helped:[
+        {
+            name: {
+                type: String,
+                trim: true,
+            },
+            description: {
+                type: String,
+                trim: true,
+            },
+            handicapId: {
+                type: mongoose.Schema.Types.ObjectId,
+                trim: true
+            }
+        }
+    ],
     isAdmin: {
         type: Boolean,
         default: false
@@ -67,55 +83,55 @@ const VolunteerSchema = mongoose.Schema({
 })
 
 VolunteerSchema.methods.toJSON = function(){
-    const user = this
-    const userObj = user.toObject()
+    const volunteer = this
+    const volunteerObj = volunteer.toObject()
 
-    delete userObj.password
-    delete userObj.tokens
+    delete volunteerObj.password
+    delete volunteerObj.tokens
     
-    return userObj
+    return volunteerObj
 }
 
 VolunteerSchema.statics.findByIdCredential = async (email, password) => {
-    const user = await User.findOne({email})
+    const volunteer = await Volunteer.findOne({email})
 
-    if(!user)
+    if(!volunteer)
         throw new Error({error: 'Unable to login'})
 
-    const isMatch = await bcrypt.compare(password, user.password)
-    // const isMatch = await (password === user.password)
+    const isMatch = await bcrypt.compare(password, volunteer.password)
+    // const isMatch = await (password === volunteer.password)
 
     if(!isMatch)
         throw new Error({error: 'Unable to login'})
     
-    // console.log(user)
+    // console.log(volunteer)
 
-    return user
+    return volunteer
 }
 
 // It will generate web token and store it to the user
 VolunteerSchema.methods.generateAuthToken = async function() {
-    const user = this
-    const token = await jwt.sign({ _id: user._id.toString()}, process.env.JWT)
+    const volunteer = this
+    const token = await jwt.sign({ _id: volunteer._id.toString()}, process.env.JWT)
 
-    user.tokens = user.tokens.concat({token})
-    await user.save()
+    volunteer.tokens = volunteer.tokens.concat({token})
+    await volunteer.save()
 
     return token
 }
 
 // Hashing the plain password to the chiper text
 VolunteerSchema.pre('save', async function (next){
-    const user = this
+    const volunteer = this
 
-    if(user.isModified('password')){
-        user.password = await bcrypt.hash(user.password, 8)
+    if(volunteer.isModified('password')){
+        volunteer.password = await bcrypt.hash(volunteer.password, 8)
     }
 
     next()
 })
 
 
-const User = mongoose.model('Volunteer', VolunteerSchema)
+const Volunteer = mongoose.model('Volunteer', VolunteerSchema)
 
-module.exports = User
+module.exports = Volunteer

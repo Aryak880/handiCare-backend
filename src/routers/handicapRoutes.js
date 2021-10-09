@@ -3,10 +3,10 @@ const router = new express.Router()
 const Handicap = require('../models/HandicapModel.js')
 const auth = require('../middleware/authHandicap')
 
-//hellothere
-router.get('/get', async(req, res) =>{
-    res.send({error: "nonon"})
-})
+// //hellothere
+// router.get('/get', async(req, res) =>{
+//     res.send({error: "nonon"})
+// })
 
 
 // Create a new handicap
@@ -64,7 +64,7 @@ router.post('/handicap/logout', auth, async (req, res) => {
         await req.handicap.save()
         res.status(200).send()
     } catch (error) {
-        res.status(500).send()
+        res.status(404).send(error)
     }
 })
 
@@ -79,7 +79,7 @@ router.get('/handicap', auth, async (req, res) => {
 // update the handicap information
 router.patch('/handicap/me', auth, async (req, res) => {
     const updates = Object.keys(req.body)
-    const allowUpdates = ['name', 'age', 'password', 'email', 'gender']
+    const allowUpdates = ['name', 'age', 'password', 'email', 'gender', 'achievements']
     const isValidOpretion = updates.every(update => allowUpdates.includes(update))
 
     if(!isValidOpretion)
@@ -133,7 +133,7 @@ router.get('/handicapes', auth, async(req, res) => {
 })
 
 // make any handicap to admin
-router.patch('/handicapes/:id', auth, async(req, res) => {
+router.patch('/handicap-admin/:id', auth, async(req, res) => {
     const _id = req.params.id
 
     try {

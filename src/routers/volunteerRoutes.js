@@ -67,16 +67,16 @@ router.post('/volunteer/logout', auth, async (req, res) => {
 
 
 // get/volunteers        developer
-// private
-router.get('/volunteers', auth, async (req, res) => {
-    res.send(req.volunteers)
-})
+// // private
+// router.get('/volunteers', auth, async (req, res) => {
+//     res.send(req.volunteers)
+// })
 
 
 // update the volunteer information
 router.patch('/volunteer/me', auth, async (req, res) => {
     const updates = Object.keys(req.body)
-    const allowUpdates = ['name', 'age', 'password', 'email', 'gender', 'instagram', 'facebook']
+    const allowUpdates = ['name', 'age', 'password', 'email', 'gender', 'instagram', 'facebook', 'helped']
     const isValidOpretion = updates.every(update => allowUpdates.includes(update))
 
     if(!isValidOpretion)
@@ -117,7 +117,7 @@ router.delete('/volunteer/me', auth, async (req, res) => {
 
 
 // For admin
-router.get('/volunteer', auth, async(req, res) => {
+router.get('/volunteers', auth, async(req, res) => {
     try {
         if(req.volunteer.isAdmin === false)
             throw new Error({error: "Invalid request"})

@@ -57,6 +57,14 @@ const HandicapSchema = mongoose.Schema({
                 throw new Error('Password should not include password')
         }
     },
+    instagram: {
+        type: String,
+        trim: true,
+    },
+    facebook: {
+        type: String,
+        trim: true,
+    },
     isAdmin: {
         type: Boolean,
         default: false
